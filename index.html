@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Govee Light Controller</title>
   <style>
-    body { font-family: sans-serif; max-width: 600px; margin: 30px auto; padding: 10px; }
+    body { font-family: sans-serif; max-width: 600px; margin: 30px auto; padding: 10px; background: #f7f7f7; }
     h1 { text-align: center; }
-    .section { margin-bottom: 20px; }
+    .section { margin-bottom: 20px; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
     button { padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
     input[type=color] { width: 60px; height: 40px; border: none; cursor: pointer; }
     input[type=range] { width: 80%; }
@@ -17,11 +17,12 @@
   </style>
 </head>
 <body>
-  <h1>Govee Light Controller</h1>
-  <p><strong>Note:</strong> This demo directly uses your API key and will expose it if you publish publicly. For safe use, hide the key in a backend service.</p>
+  <h1>💡 Govee Light Controller</h1>
+  <p><strong>Note:</strong> This page talks directly to the Govee API using your key, which is visible in the source.  
+  For public use, use a server proxy to keep the key secret.</p>
 
   <div class="section">
-    <button id="refresh" class="blue">Refresh Devices</button>
+    <button id="refresh" class="blue">🔄 Refresh Devices</button>
     <p id="status">Status: Waiting...</p>
   </div>
 
@@ -31,13 +32,13 @@
   </div>
 
   <div class="section">
-    <label>Color:</label>
+    <label>🎨 Color:</label>
     <input type="color" id="colorPicker" value="#ffffff">
     <button id="setColor" class="blue">Set Color</button>
   </div>
 
   <div class="section">
-    <label>Brightness: <span id="brightnessValue">100</span>%</label><br>
+    <label>💡 Brightness: <span id="brightnessValue">100</span>%</label><br>
     <input type="range" id="brightness" min="0" max="100" value="100">
     <button id="setBrightness" class="blue">Set Brightness</button>
   </div>
@@ -48,7 +49,7 @@
   </div>
 
   <script>
-    const API_KEY = "f4b87beb-7426-4751-9cbd-811d08300ea8"; // ⚠️ Visible in source, not safe for public
+    const API_KEY = "f4b87beb-7426-4751-9cbd-811d08300ea8"; // ⚠️ Visible in source (not safe for public)
     const API_BASE = "https://developer-api.govee.com/v1";
     const statusEl = document.getElementById('status');
     const deviceSelect = document.getElementById('deviceSelect');
@@ -71,32 +72,53 @@
           headers: { 'Govee-API-Key': API_KEY }
         });
         const data = await res.json();
+        console.log("Devices response:", data);
         const devices = data.data?.devices || [];
         deviceSelect.innerHTML = '';
+        if (devices.length === 0) {
+          const opt = document.createElement('option');
+          opt.textContent = '-- No devices found --';
+          deviceSelect.appendChild(opt);
+          statusEl.textContent = 'No devices found. Check API key or account.';
+          return;
+        }
         devices.forEach(dev => {
           const opt = document.createElement('option');
           opt.value = JSON.stringify(dev);
-          opt.textContent = dev.deviceName || dev.model || dev.deviceId;
+          opt.textContent = dev.deviceName || dev.model || dev.device || 'Unknown Device';
           deviceSelect.appendChild(opt);
         });
-        statusEl.textContent = `Status: Found ${devices.length} devices.`;
+        statusEl.textContent = `Found ${devices.length} device(s).`;
       } catch (err) {
         console.error(err);
-        statusEl.textContent = 'Error fetching devices';
+        statusEl.textContent = 'Error fetching devices.';
       }
     }
 
     async function sendCommand(name, value) {
-      const selected = JSON.parse(deviceSelect.value || '{}');
-      if (!selected.device || !selected.model) {
+      if (!deviceSelect.value) {
         statusEl.textContent = 'Select a device first';
         return;
       }
+
+      const selected = JSON.parse(deviceSelect.value);
+      console.log("Selected device:", selected);
+
+      const deviceId = selected.device || selected.deviceId || selected.deviceName;
+      const model = selected.model || selected.sku || selected.deviceType;
+
+      if (!deviceId || !model) {
+        statusEl.textContent = 'Error: Device or model missing. Check console.';
+        console.log("Device details missing:", selected);
+        return;
+      }
+
       const body = {
-        device: selected.device,
-        model: selected.model,
-        cmd: { name, value } // ✅ Fixed key name
+        device: deviceId,
+        model: model,
+        cmd: { name, value }
       };
+
       try {
         const res = await fetch(`${API_BASE}/devices/control`, {
           method: 'PUT',
@@ -107,14 +129,15 @@
           body: JSON.stringify(body)
         });
         const data = await res.json();
-        if (res.ok) {
-          statusEl.textContent = 'Command sent successfully';
+        console.log("Control response:", data);
+        if (res.ok && data.message === "success") {
+          statusEl.textContent = '✅ Command sent successfully!';
         } else {
-          statusEl.textContent = 'Error: ' + JSON.stringify(data);
+          statusEl.textContent = '⚠️ Error: ' + JSON.stringify(data);
         }
       } catch (err) {
         console.error(err);
-        statusEl.textContent = 'Failed to send command';
+        statusEl.textContent = '❌ Failed to send command.';
       }
     }
 
@@ -136,4 +159,3 @@
   </script>
 </body>
 </html>
-
