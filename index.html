@@ -95,7 +95,7 @@
       const body = {
         device: selected.device,
         model: selected.model,
-        command: { name, value }
+        cmd: { name, value } // ✅ Fixed key name
       };
       try {
         const res = await fetch(`${API_BASE}/devices/control`, {
