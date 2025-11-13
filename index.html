@@ -1,286 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>💡 Govee Smart Dashboard</title>
-<style>
-body{margin:0;font-family:Inter,sans-serif;background:#121212;color:#e0e0e0;}
-header{background:#1f1f1f;color:#4a90e2;padding:30px;text-align:center;font-size:2em;box-shadow:0 4px 12px rgba(0,0,0,0.5);}
-main{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;padding:30px;}
-.card{background:#1e1e1e;border-radius:20px;padding:25px;box-shadow:0 8px 20px rgba(0,0,0,0.6);transition:transform 0.2s,box-shadow 0.2s;}
-.card:hover{transform:translateY(-5px);box-shadow:0 12px 25px rgba(0,0,0,0.8);}
-h2{margin-top:0;color:#4a90e2;}
-select,input[type=color],input[type=range],button,input[type=time],input[type=text]{width:100%;margin-bottom:15px;padding:10px;border-radius:12px;border:none;background:#2c2c2c;color:#e0e0e0;font-size:1em;box-sizing:border-box;}
-input[type=range]{padding:0;height:8px;}
-button{cursor:pointer;font-weight:600;transition:background 0.2s;}
-button:hover{opacity:0.85;}
-.on{background:#4CAF50;color:white;}
-.off{background:#E53935;color:white;}
-.blue{background:#4a90e2;color:white;}
-.preset-btn{background:#f39c12;color:white;font-weight:600;}
-.preset-btn:hover{background:#e67e22;}
-#status{font-weight:600;margin-top:10px;}
-.control-group{display:flex;gap:10px;}
-.control-group button{flex:1;}
-#deviceState{margin-top:10px;padding:10px;background:#2a2a2a;border-radius:10px;}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Govee Light Controller</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 30px auto; padding: 10px; background: #f7f7f7; }
+    h1 { text-align: center; }
+    .section { margin-bottom: 20px; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    button { padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
+    input[type=color] { width: 60px; height: 40px; border: none; cursor: pointer; }
+    input[type=range] { width: 80%; }
+    .on { background-color: #4CAF50; color: white; }
+    .off { background-color: #E53935; color: white; }
+    .blue { background-color: #2196F3; color: white; }
+  </style>
 </head>
 <body>
-<header>💡 Govee Smart Dashboard</header>
-<main>
+  <h1>💡 Govee Light Controller</h1>
+  <p><strong>Note:</strong> This page talks directly to the Govee API using your key, which is visible in the source.  
+  For public use, use a server proxy to keep the key secret.</p>
 
-<div class="card">
-<h2>Devices</h2>
-<button id="refresh" class="blue">🔄 Refresh Devices</button>
-<select id="deviceSelect"></select>
-<p id="status">Status: Waiting...</p>
-<div id="deviceState">
-<p>Power: <span id="statePower">-</span></p>
-<p>Brightness: <span id="stateBrightness">-</span></p>
-<p>Color Temp: <span id="stateTemp">-</span></p>
-<p>RGB: <span id="stateRGB">-</span></p>
-</div>
-<label><input type="checkbox" id="applyAll"> Apply to ALL devices</label>
-</div>
+  <div class="section">
+    <button id="refresh" class="blue">🔄 Refresh Devices</button>
+    <p id="status">Status: Waiting...</p>
+  </div>
 
-<div class="card">
-<h2>🎨 Color Control</h2>
-<input type="color" id="colorPicker" value="#ffffff">
-<button id="setColor" class="blue">Set Color</button>
-</div>
+  <div class="section">
+    <label for="deviceSelect">Device:</label>
+    <select id="deviceSelect"></select>
+  </div>
 
-<div class="card">
-<h2>💡 Brightness</h2>
-<label>Brightness: <span id="brightnessValue">100</span>%</label>
-<input type="range" id="brightness" min="0" max="100" value="100">
-<button id="setBrightness" class="blue">Set Brightness</button>
-</div>
+  <div class="section">
+    <label>🎨 Color:</label>
+    <input type="color" id="colorPicker" value="#ffffff">
+    <button id="setColor" class="blue">Set Color</button>
+  </div>
 
-<div class="card">
-<h2>Power</h2>
-<div class="control-group">
-<button id="turnOn" class="on">Turn ON</button>
-<button id="turnOff" class="off">Turn OFF</button>
-</div>
-</div>
+  <div class="section">
+    <label>💡 Brightness: <span id="brightnessValue">100</span>%</label><br>
+    <input type="range" id="brightness" min="0" max="100" value="100">
+    <button id="setBrightness" class="blue">Set Brightness</button>
+  </div>
 
-<div class="card">
-<h2>Presets</h2>
-<button class="preset-btn" id="preset1">🌙 Bedtime</button>
-<button class="preset-btn" id="preset2">🎬 Movie</button>
-<button class="preset-btn" id="preset3">📖 Reading</button>
-<button class="preset-btn" id="preset4">🛀 Relax</button>
-<button class="preset-btn" id="preset5">🎉 Party</button>
-<button class="preset-btn" id="preset6">🌅 Sunrise</button>
-<button class="preset-btn" id="preset7">🌇 Sunset</button>
-<button class="preset-btn" id="preset8">⚡ Focus</button>
-<button class="preset-btn" id="preset9">❤️ Romantic</button>
-<button class="preset-btn" id="preset10">☀️ Energy</button>
-</div>
+  <div class="section">
+    <button id="turnOn" class="on">Turn ON</button>
+    <button id="turnOff" class="off">Turn OFF</button>
+  </div>
 
-<div class="card">
-<h2>Custom Scene</h2>
-<input type="text" id="sceneName" placeholder="Scene Name">
-<input type="color" id="sceneColor" value="#ffffff">
-<input type="range" id="sceneBrightness" min="0" max="100" value="100">
-<button id="saveScene" class="blue">Save & Apply Scene</button>
-</div>
+  <script>
+    const API_KEY = "f4b87beb-7426-4751-9cbd-811d08300ea8"; // ⚠️ Visible in source (not safe for public)
+    const API_BASE = "https://developer-api.govee.com/v1";
+    const statusEl = document.getElementById('status');
+    const deviceSelect = document.getElementById('deviceSelect');
+    const brightnessSlider = document.getElementById('brightness');
+    const brightnessValue = document.getElementById('brightnessValue');
 
-<div class="card">
-<h2>Scheduler</h2>
-<label>Time: <input type="time" id="scheduleTime"></label>
-<select id="schedulePreset">
-<option value="bedtime">🌙 Bedtime</option>
-<option value="movieMode">🎬 Movie</option>
-<option value="readingMode">📖 Reading</option>
-<option value="relaxMode">🛀 Relax</option>
-<option value="partyMode">🎉 Party</option>
-<option value="sunriseMode">🌅 Sunrise</option>
-<option value="sunsetMode">🌇 Sunset</option>
-<option value="focusMode">⚡ Focus</option>
-<option value="romanticMode">❤️ Romantic</option>
-<option value="energyBoostMode">☀️ Energy</option>
-</select>
-<button id="addSchedule" class="blue">Add Schedule</button>
-<ul id="scheduleList"></ul>
-</div>
+    document.getElementById('refresh').addEventListener('click', fetchDevices);
+    document.getElementById('setColor').addEventListener('click', setColor);
+    document.getElementById('setBrightness').addEventListener('click', setBrightness);
+    document.getElementById('turnOn').addEventListener('click', () => sendCommand('turn', 'on'));
+    document.getElementById('turnOff').addEventListener('click', () => sendCommand('turn', 'off'));
+    brightnessSlider.addEventListener('input', () => {
+      brightnessValue.textContent = brightnessSlider.value;
+    });
 
-<script>
-document.addEventListener('DOMContentLoaded',()=>{
-const API_KEY="f4b87beb-7426-4751-9cbd-811d08300ea8";
-const API_BASE="https://developer-api.govee.com/v1";
-let discoInterval=null, pollInterval=null;
-let savedScenes={}, schedules=[];
-
-const statusEl=document.getElementById('status');
-const deviceSelect=document.getElementById('deviceSelect');
-const brightnessSlider=document.getElementById('brightness');
-const brightnessValue=document.getElementById('brightnessValue');
-const statePower=document.getElementById('statePower');
-const stateBrightness=document.getElementById('stateBrightness');
-const stateTemp=document.getElementById('stateTemp');
-const stateRGB=document.getElementById('stateRGB');
-const applyAll=document.getElementById('applyAll');
-
-function hexToRgb(hex){ const bigint=parseInt(hex.slice(1),16); return { r:(bigint>>16)&255, g:(bigint>>8)&255, b:bigint&255 }; }
-function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
-
-// ---------------- QUEUED COMMAND ----------------
-async function sendCommandQueued(name,value){
-  let devices=[deviceSelect.value?JSON.parse(deviceSelect.value):null];
-  if(applyAll.checked){
-    devices=Array.from(deviceSelect.options).map(o=>JSON.parse(o.value));
-  }
-  for(let selected of devices){
-    if(!selected) continue;
-    const deviceId=selected.device||selected.deviceId||selected.deviceName;
-    const model=selected.model||selected.sku||selected.deviceType;
-    if(!deviceId||!model){ statusEl.textContent='Device/model missing'; continue; }
-    try{
-      await fetch(`${API_BASE}/devices/control`,{
-        method:'PUT',
-        headers:{ 'Content-Type':'application/json','Govee-API-Key':API_KEY },
-        body: JSON.stringify({ device:deviceId, model:model, cmd:{name,value} })
-      });
-      await sleep(200); // prevent rate limit
-    }catch(err){ console.error(err); }
-  }
-}
-
-// ---------------- DEVICE STATE ----------------
-async function fetchDevices(){
-  statusEl.textContent='Fetching devices...';
-  try{
-    const res=await fetch(`${API_BASE}/devices`,{ headers:{'Govee-API-Key':API_KEY} });
-    const data=await res.json();
-    const devices=data.data?.devices||[];
-    deviceSelect.innerHTML='';
-    if(devices.length===0){ deviceSelect.innerHTML='<option>No devices</option>'; statusEl.textContent='No devices'; return; }
-    devices.forEach(dev=>{ const opt=document.createElement('option'); opt.value=JSON.stringify(dev); opt.textContent=dev.deviceName||dev.model||'Unknown'; deviceSelect.appendChild(opt); });
-    statusEl.textContent=`Found ${devices.length} device(s)`;
-  }catch(err){ console.error(err); statusEl.textContent='Error fetching devices'; }
-}
-
-async function updateDeviceState(){
-  if(!deviceSelect.value) return;
-  const selected=JSON.parse(deviceSelect.value);
-  const deviceId=selected.device||selected.deviceId||selected.deviceName;
-  const model=selected.model||selected.sku||selected.deviceType;
-  try{
-    const res=await fetch(`${API_BASE}/devices/state?device=${deviceId}&model=${model}`,{ headers:{'Govee-API-Key':API_KEY} });
-    const data=await res.json();
-    const props=data.data?.properties||[];
-    const powerObj=props.find(p=>p.name==='power')||{};
-    const brightnessObj=props.find(p=>p.name==='brightness')||{};
-    const tempObj=props.find(p=>p.name==='colorTem')||{};
-    const colorObj=props.find(p=>p.name==='color')||{};
-    statePower.textContent=powerObj.value||'-';
-    stateBrightness.textContent=brightnessObj.value||'-';
-    stateTemp.textContent=tempObj.value||'-';
-    stateRGB.textContent=colorObj.value?`R:${colorObj.value.r} G:${colorObj.value.g} B:${colorObj.value.b}`:'-';
-    if(brightnessObj.value){ brightnessSlider.value=brightnessObj.value; brightnessValue.textContent=brightnessObj.value; }
-  }catch(err){ console.error(err); }
-}
-
-function startPolling(){ if(pollInterval) clearInterval(pollInterval); pollInterval=setInterval(updateDeviceState,5000); updateDeviceState(); }
-
-// ---------------- EVENTS ----------------
-document.getElementById('refresh').addEventListener('click',fetchDevices);
-document.getElementById('setColor').addEventListener('click',()=>sendCommandQueued('color',hexToRgb(document.getElementById('colorPicker').value)));
-document.getElementById('setBrightness').addEventListener('click',()=>sendCommandQueued('brightness',parseInt(brightnessSlider.value)));
-document.getElementById('turnOn').addEventListener('click',()=>sendCommandQueued('turn','on'));
-document.getElementById('turnOff').addEventListener('click',()=>sendCommandQueued('turn','off'));
-brightnessSlider.addEventListener('input',()=>{ brightnessValue.textContent=brightnessSlider.value; });
-
-// ---------------- PRESETS ----------------
-function stopDisco(){ if(discoInterval){ clearInterval(discoInterval); discoInterval=null; } }
-
-async function applyPreset(colorTemp,brightness,color){
-  stopDisco();
-  await sendCommandQueued('turn','on');
-  if(colorTemp){
-    await sendCommandQueued('colorTem', colorTemp);
-  }
-  if(color){
-    await sendCommandQueued('color', color);
-  }
-  if(brightness!==undefined){
-    // Smooth fade for brightness
-    const steps = 10;
-    const current = parseInt(brightnessSlider.value)||100;
-    for(let i=1;i<=steps;i++){
-      const val = Math.round(current + (i*(brightness-current)/steps));
-      await sendCommandQueued('brightness',val);
-      await sleep(150);
+    async function fetchDevices() {
+      statusEl.textContent = 'Status: Fetching devices...';
+      try {
+        const res = await fetch(`${API_BASE}/devices`, {
+          headers: { 'Govee-API-Key': API_KEY }
+        });
+        const data = await res.json();
+        console.log("Devices response:", data);
+        const devices = data.data?.devices || [];
+        deviceSelect.innerHTML = '';
+        if (devices.length === 0) {
+          const opt = document.createElement('option');
+          opt.textContent = '-- No devices found --';
+          deviceSelect.appendChild(opt);
+          statusEl.textContent = 'No devices found. Check API key or account.';
+          return;
+        }
+        devices.forEach(dev => {
+          const opt = document.createElement('option');
+          opt.value = JSON.stringify(dev);
+          opt.textContent = dev.deviceName || dev.model || dev.device || 'Unknown Device';
+          deviceSelect.appendChild(opt);
+        });
+        statusEl.textContent = `Found ${devices.length} device(s).`;
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = 'Error fetching devices.';
+      }
     }
-  }
-}
 
-// BEDTIME (4% brightness, warm white)
-document.getElementById('preset1').addEventListener('click',()=>applyPreset(2700,4));
-document.getElementById('preset2').addEventListener('click',()=>applyPreset(null,20,{r:0,g:0,b:100}));
-document.getElementById('preset3').addEventListener('click',()=>applyPreset(4000,90));
-document.getElementById('preset4').addEventListener('click',()=>applyPreset(3000,40));
-document.getElementById('preset5').addEventListener('click',()=>{
-  stopDisco();
-  let colors=[{r:255,g:0,b:0},{r:0,g:255,b:0},{r:0,g:0,b:255},{r:255,g:255,b:0}];
-  let i=0;
-  discoInterval=setInterval(()=>{ sendCommandQueued('color',colors[i]); sendCommandQueued('brightness',100); i=(i+1)%colors.length; },700);
-});
-document.getElementById('preset6').addEventListener('click',()=>applyPreset(2700,70));
-document.getElementById('preset7').addEventListener('click',()=>applyPreset(2700,30));
-document.getElementById('preset8').addEventListener('click',()=>applyPreset(5000,100));
-document.getElementById('preset9').addEventListener('click',()=>applyPreset(null,40,{r:255,g:100,b:150}));
-document.getElementById('preset10').addEventListener('click',()=>applyPreset(6500,100));
+    async function sendCommand(name, value) {
+      if (!deviceSelect.value) {
+        statusEl.textContent = 'Select a device first';
+        return;
+      }
 
-// ---------------- SCENES ----------------
-document.getElementById('saveScene').addEventListener('click',async ()=>{
-  const name=document.getElementById('sceneName').value.trim();
-  const color=hexToRgb(document.getElementById('sceneColor').value);
-  const brightness=parseInt(document.getElementById('sceneBrightness').value);
-  if(!name) return alert('Enter scene name');
-  savedScenes[name]={color,brightness};
-  await sendCommandQueued('color',color);
-  await sendCommandQueued('brightness',brightness);
-  statusEl.textContent=`💾 Applied scene: ${name}`;
-});
+      const selected = JSON.parse(deviceSelect.value);
+      console.log("Selected device:", selected);
 
-// ---------------- SCHEDULER ----------------
-function checkSchedules(){
-  const now=new Date();
-  const timeStr=now.toTimeString().slice(0,5);
-  for(let s of schedules){ if(s.time===timeStr){ s.action(); statusEl.textContent=`⏰ Scheduled: ${s.name}`; } }
-}
-document.getElementById('addSchedule').addEventListener('click',()=>{
-  const time=document.getElementById('scheduleTime').value;
-  const preset=document.getElementById('schedulePreset').value;
-  if(!time) return alert('Select time');
-  let action;
-  switch(preset){
-    case 'bedtime': action=()=>applyPreset(2700,4); break;
-    case 'movieMode': action=()=>applyPreset(null,20,{r:0,g:0,b:100}); break;
-    case 'readingMode': action=()=>applyPreset(4000,90); break;
-    case 'relaxMode': action=()=>applyPreset(3000,40); break;
-    case 'partyMode': action=()=>{
-      let colors=[{r:255,g:0,b:0},{r:0,g:255,b:0},{r:0,g:0,b:255},{r:255,g:255,b:0}];
-      let i=0;
-      discoInterval=setInterval(()=>{ sendCommandQueued('color',colors[i]); sendCommandQueued('brightness',100); i=(i+1)%colors.length; },700);
-    }; break;
-    case 'sunriseMode': action=()=>applyPreset(2700,70); break;
-    case 'sunsetMode': action=()=>applyPreset(2700,30); break;
-    case 'focusMode': action=()=>applyPreset(5000,100); break;
-    case 'romanticMode': action=()=>applyPreset(null,40,{r:255,g:100,b:150}); break;
-    case 'energyBoostMode': action=()=>applyPreset(6500,100); break;
-  }
-  schedules.push({time,name:preset,action});
-  const li=document.createElement('li'); li.textContent=`${time} → ${preset}`; document.getElementById('scheduleList').appendChild(li);
-});
+      const deviceId = selected.device || selected.deviceId || selected.deviceName;
+      const model = selected.model || selected.sku || selected.deviceType;
 
-// ---------------- INIT ----------------
-fetchDevices().then(()=>startPolling());
-setInterval(checkSchedules,60000);
-});
-</script>
+      if (!deviceId || !model) {
+        statusEl.textContent = 'Error: Device or model missing. Check console.';
+        console.log("Device details missing:", selected);
+        return;
+      }
+
+      const body = {
+        device: deviceId,
+        model: model,
+        cmd: { name, value }
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/devices/control`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Govee-API-Key': API_KEY
+          },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        console.log("Control response:", data);
+        if (res.ok && data.message === "success") {
+          statusEl.textContent = '✅ Command sent successfully!';
+        } else {
+          statusEl.textContent = '⚠️ Error: ' + JSON.stringify(data);
+        }
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = '❌ Failed to send command.';
+      }
+    }
+
+    function hexToRgb(hex) {
+      const bigint = parseInt(hex.slice(1), 16);
+      return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+    }
+
+    function setColor() {
+      const hex = document.getElementById('colorPicker').value;
+      const rgb = hexToRgb(hex);
+      sendCommand('color', rgb);
+    }
+
+    function setBrightness() {
+      const val = parseInt(brightnessSlider.value);
+      sendCommand('brightness', val);
+    }
+  </script>
 </body>
 </html>
+
