@@ -8,7 +8,7 @@
     body { font-family: sans-serif; max-width: 600px; margin: 30px auto; padding: 10px; background: #f7f7f7; }
     h1 { text-align: center; }
     .section { margin-bottom: 20px; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-    button { padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
+    button { padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; margin-right: 5px; }
     input[type=color] { width: 60px; height: 40px; border: none; cursor: pointer; }
     input[type=range] { width: 80%; }
     .on { background-color: #4CAF50; color: white; }
@@ -46,6 +46,7 @@
   <div class="section">
     <button id="turnOn" class="on">Turn ON</button>
     <button id="turnOff" class="off">Turn OFF</button>
+    <button id="sleepMode" style="background-color: #FFA500; color:white;">Sleep Mode 🌙</button>
   </div>
 
   <script>
@@ -61,6 +62,8 @@
     document.getElementById('setBrightness').addEventListener('click', setBrightness);
     document.getElementById('turnOn').addEventListener('click', () => sendCommand('turn', 'on'));
     document.getElementById('turnOff').addEventListener('click', () => sendCommand('turn', 'off'));
+    document.getElementById('sleepMode').addEventListener('click', sleepMode);
+
     brightnessSlider.addEventListener('input', () => {
       brightnessValue.textContent = brightnessSlider.value;
     });
@@ -156,7 +159,32 @@
       const val = parseInt(brightnessSlider.value);
       sendCommand('brightness', val);
     }
+
+    function sleepMode() {
+      if (!deviceSelect.value) {
+        statusEl.textContent = 'Select a device first';
+        return;
+      }
+
+      const selected = JSON.parse(deviceSelect.value);
+      const deviceId = selected.device || selected.deviceId || selected.deviceName;
+      const model = selected.model || selected.sku || selected.deviceType;
+
+      if (!deviceId || !model) {
+        statusEl.textContent = 'Error: Device or model missing.';
+        return;
+      }
+
+      // Warm white RGB
+      const warmWhite = { r: 255, g: 147, b: 41 };
+      const brightness = 4; // 4%
+
+      // Send color and brightness commands
+      sendCommand('color', warmWhite);
+      sendCommand('brightness', brightness);
+
+      statusEl.textContent = '💤 Sleep Mode activated!';
+    }
   </script>
 </body>
 </html>
-
