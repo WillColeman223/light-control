@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Govee Light Controller</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 30px auto; padding: 10px; }
+    h1 { text-align: center; }
+    .section { margin-bottom: 20px; }
+    button { padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; }
+    input[type=color] { width: 60px; height: 40px; border: none; cursor: pointer; }
+    input[type=range] { width: 80%; }
+    .on { background-color: #4CAF50; color: white; }
+    .off { background-color: #E53935; color: white; }
+    .blue { background-color: #2196F3; color: white; }
+  </style>
+</head>
+<body>
+  <h1>Govee Light Controller</h1>
+  <p><strong>Note:</strong> This demo directly uses your API key and will expose it if you publish publicly. For safe use, hide the key in a backend service.</p>
+
+  <div class="section">
+    <button id="refresh" class="blue">Refresh Devices</button>
+    <p id="status">Status: Waiting...</p>
+  </div>
+
+  <div class="section">
+    <label for="deviceSelect">Device:</label>
+    <select id="deviceSelect"></select>
+  </div>
+
+  <div class="section">
+    <label>Color:</label>
+    <input type="color" id="colorPicker" value="#ffffff">
+    <button id="setColor" class="blue">Set Color</button>
+  </div>
+
+  <div class="section">
+    <label>Brightness: <span id="brightnessValue">100</span>%</label><br>
+    <input type="range" id="brightness" min="0" max="100" value="100">
+    <button id="setBrightness" class="blue">Set Brightness</button>
+  </div>
+
+  <div class="section">
+    <button id="turnOn" class="on">Turn ON</button>
+    <button id="turnOff" class="off">Turn OFF</button>
+  </div>
+
+  <script>
+    const API_KEY = "f4b87beb-7426-4751-9cbd-811d08300ea8"; // ⚠️ Visible in source, not safe for public
+    const API_BASE = "https://developer-api.govee.com/v1";
+    const statusEl = document.getElementById('status');
+    const deviceSelect = document.getElementById('deviceSelect');
+    const brightnessSlider = document.getElementById('brightness');
+    const brightnessValue = document.getElementById('brightnessValue');
+
+    document.getElementById('refresh').addEventListener('click', fetchDevices);
+    document.getElementById('setColor').addEventListener('click', setColor);
+    document.getElementById('setBrightness').addEventListener('click', setBrightness);
+    document.getElementById('turnOn').addEventListener('click', () => sendCommand('turn', 'on'));
+    document.getElementById('turnOff').addEventListener('click', () => sendCommand('turn', 'off'));
+    brightnessSlider.addEventListener('input', () => {
+      brightnessValue.textContent = brightnessSlider.value;
+    });
+
+    async function fetchDevices() {
+      statusEl.textContent = 'Status: Fetching devices...';
+      try {
+        const res = await fetch(`${API_BASE}/devices`, {
+          headers: { 'Govee-API-Key': API_KEY }
+        });
+        const data = await res.json();
+        const devices = data.data?.devices || [];
+        deviceSelect.innerHTML = '';
+        devices.forEach(dev => {
+          const opt = document.createElement('option');
+          opt.value = JSON.stringify(dev);
+          opt.textContent = dev.deviceName || dev.model || dev.deviceId;
+          deviceSelect.appendChild(opt);
+        });
+        statusEl.textContent = `Status: Found ${devices.length} devices.`;
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = 'Error fetching devices';
+      }
+    }
+
+    async function sendCommand(name, value) {
+      const selected = JSON.parse(deviceSelect.value || '{}');
+      if (!selected.device || !selected.model) {
+        statusEl.textContent = 'Select a device first';
+        return;
+      }
+      const body = {
+        device: selected.device,
+        model: selected.model,
+        command: { name, value }
+      };
+      try {
+        const res = await fetch(`${API_BASE}/devices/control`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Govee-API-Key': API_KEY
+          },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (res.ok) {
+          statusEl.textContent = 'Command sent successfully';
+        } else {
+          statusEl.textContent = 'Error: ' + JSON.stringify(data);
+        }
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = 'Failed to send command';
+      }
+    }
+
+    function hexToRgb(hex) {
+      const bigint = parseInt(hex.slice(1), 16);
+      return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+    }
+
+    function setColor() {
+      const hex = document.getElementById('colorPicker').value;
+      const rgb = hexToRgb(hex);
+      sendCommand('color', rgb);
+    }
+
+    function setBrightness() {
+      const val = parseInt(brightnessSlider.value);
+      sendCommand('brightness', val);
+    }
+  </script>
+</body>
+</html>
+
