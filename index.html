@@ -5,99 +5,68 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Govee Light Dashboard - Dark Mode</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
-  body {
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    background: #121212;
-    color: #e0e0e0;
-  }
-
-  header {
-    background: #1f1f1f;
-    color: #4a90e2;
-    padding: 30px 20px;
-    text-align: center;
-    font-size: 2em;
-    font-weight: 600;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-  }
-
-  main {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    padding: 30px;
-  }
-
-  .card {
-    background: #1e1e1e;
-    border-radius: 20px;
-    padding: 25px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.8);
-  }
-
-  h2 {
-    margin-top: 0;
-    font-size: 1.3em;
-    margin-bottom: 15px;
-    color: #4a90e2;
-  }
-
-  select, input[type=color], input[type=range], button {
-    width: 100%;
-    margin-bottom: 15px;
-    padding: 10px;
-    border-radius: 12px;
-    border: none;
-    box-sizing: border-box;
-    font-size: 1em;
-    background: #2c2c2c;
-    color: #e0e0e0;
-  }
-
-  input[type=range] {
-    padding: 0;
-    height: 8px;
-  }
-
-  button {
-    cursor: pointer;
-    font-weight: 600;
-    transition: background 0.2s ease;
-  }
-
-  button:hover {
-    opacity: 0.85;
-  }
-
-  .on { background: #4CAF50; color: white; }
-  .off { background: #E53935; color: white; }
-  .blue { background: #4a90e2; color: white; }
-  .preset-btn { background: #f39c12; color: white; font-weight: 600; }
-
-  .preset-btn:hover { background: #e67e22; }
-
-  #status {
-    font-weight: 600;
-    margin-top: 10px;
-  }
-
-  .control-group {
-    display: flex;
-    gap: 10px;
-  }
-
-  .control-group button {
-    flex: 1;
-  }
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  background: #121212;
+  color: #e0e0e0;
+}
+header {
+  background: #1f1f1f;
+  color: #4a90e2;
+  padding: 30px 20px;
+  text-align: center;
+  font-size: 2em;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+main {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 30px;
+}
+.card {
+  background: #1e1e1e;
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.8);
+}
+h2 {
+  margin-top: 0;
+  font-size: 1.3em;
+  margin-bottom: 15px;
+  color: #4a90e2;
+}
+select, input[type=color], input[type=range], button {
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 12px;
+  border: none;
+  box-sizing: border-box;
+  font-size: 1em;
+  background: #2c2c2c;
+  color: #e0e0e0;
+}
+input[type=range] {padding: 0; height: 8px;}
+button {cursor: pointer; font-weight: 600; transition: background 0.2s ease;}
+button:hover {opacity: 0.85;}
+.on { background: #4CAF50; color: white; }
+.off { background: #E53935; color: white; }
+.blue { background: #4a90e2; color: white; }
+.preset-btn { background: #f39c12; color: white; font-weight: 600; }
+.preset-btn:hover { background: #e67e22; }
+#status { font-weight: 600; margin-top: 10px; }
+.control-group { display: flex; gap: 10px; }
+.control-group button { flex: 1; }
 </style>
 </head>
 <body>
@@ -135,37 +104,55 @@
 
   <div class="card">
     <h2>Presets</h2>
-    <button id="bedtime" class="preset-btn">🌙 Bedtime</button>
-    <small>Sets brightness to 4% and warm white</small>
+    <button class="preset-btn" id="preset1">🌙 Bedtime</button>
+    <button class="preset-btn" id="preset2">🎬 Movie Mode</button>
+    <button class="preset-btn" id="preset3">📖 Reading</button>
+    <button class="preset-btn" id="preset4">🛀 Relax</button>
+    <button class="preset-btn" id="preset5">🎉 Party</button>
+    <button class="preset-btn" id="preset6">🌅 Sunrise</button>
+    <button class="preset-btn" id="preset7">🌇 Sunset</button>
+    <button class="preset-btn" id="preset8">⚡ Focus</button>
+    <button class="preset-btn" id="preset9">❤️ Romantic</button>
+    <button class="preset-btn" id="preset10">☀️ Energy Boost</button>
   </div>
 </main>
 
 <script>
 const API_KEY = "f4b87beb-7426-4751-9cbd-811d08300ea8";
 const API_BASE = "https://developer-api.govee.com/v1";
-
 const statusEl = document.getElementById('status');
 const deviceSelect = document.getElementById('deviceSelect');
 const brightnessSlider = document.getElementById('brightness');
 const brightnessValue = document.getElementById('brightnessValue');
+let discoInterval = null;
 
 document.getElementById('refresh').addEventListener('click', fetchDevices);
 document.getElementById('setColor').addEventListener('click', setColor);
 document.getElementById('setBrightness').addEventListener('click', setBrightness);
 document.getElementById('turnOn').addEventListener('click', () => sendCommand('turn', 'on'));
 document.getElementById('turnOff').addEventListener('click', () => sendCommand('turn', 'off'));
-document.getElementById('bedtime').addEventListener('click', bedtimePreset);
+
+// Preset buttons
+document.getElementById('preset1').addEventListener('click', () => bedtime());
+document.getElementById('preset2').addEventListener('click', () => movieMode());
+document.getElementById('preset3').addEventListener('click', () => readingMode());
+document.getElementById('preset4').addEventListener('click', () => relaxMode());
+document.getElementById('preset5').addEventListener('click', () => partyMode());
+document.getElementById('preset6').addEventListener('click', () => sunriseMode());
+document.getElementById('preset7').addEventListener('click', () => sunsetMode());
+document.getElementById('preset8').addEventListener('click', () => focusMode());
+document.getElementById('preset9').addEventListener('click', () => romanticMode());
+document.getElementById('preset10').addEventListener('click', () => energyBoostMode());
 
 brightnessSlider.addEventListener('input', () => {
   brightnessValue.textContent = brightnessSlider.value;
 });
 
+// DEVICE FETCH
 async function fetchDevices() {
   statusEl.textContent = 'Status: Fetching devices...';
   try {
-    const res = await fetch(`${API_BASE}/devices`, {
-      headers: { 'Govee-API-Key': API_KEY }
-    });
+    const res = await fetch(`${API_BASE}/devices`, { headers: { 'Govee-API-Key': API_KEY } });
     const data = await res.json();
     const devices = data.data?.devices || [];
     deviceSelect.innerHTML = '';
@@ -189,69 +176,70 @@ async function fetchDevices() {
   }
 }
 
+// SEND COMMAND
 async function sendCommand(name, value) {
-  if (!deviceSelect.value) {
-    statusEl.textContent = 'Select a device first';
-    return;
-  }
-
+  if (!deviceSelect.value) { statusEl.textContent = 'Select a device first'; return; }
   const selected = JSON.parse(deviceSelect.value);
   const deviceId = selected.device || selected.deviceId || selected.deviceName;
   const model = selected.model || selected.sku || selected.deviceType;
-
-  if (!deviceId || !model) {
-    statusEl.textContent = 'Error: Device or model missing.';
-    return;
-  }
-
-  const body = { device: deviceId, model, cmd: { name, value } };
+  if (!deviceId || !model) { statusEl.textContent = 'Device/model missing'; return; }
 
   try {
     const res = await fetch(`${API_BASE}/devices/control`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'Govee-API-Key': API_KEY },
-      body: JSON.stringify(body)
+      method:'PUT',
+      headers:{ 'Content-Type':'application/json','Govee-API-Key':API_KEY },
+      body: JSON.stringify({ device:deviceId, model:model, cmd:{ name, value } })
     });
     const data = await res.json();
-    if (res.ok && data.message === "success") {
-      statusEl.textContent = '✅ Command sent successfully!';
-    } else {
-      statusEl.textContent = '⚠️ Error: ' + JSON.stringify(data);
-    }
-  } catch (err) {
-    console.error(err);
-    statusEl.textContent = '❌ Failed to send command.';
-  }
+    if(res.ok && data.message==="success"){ statusEl.textContent='✅ Command sent!'; } 
+    else { statusEl.textContent='⚠️ Error: '+JSON.stringify(data); }
+  } catch(err){ console.error(err); statusEl.textContent='❌ Failed to send command'; }
 }
 
+// COLOR & BRIGHTNESS
 function hexToRgb(hex) {
-  const bigint = parseInt(hex.slice(1), 16);
-  return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+  const bigint = parseInt(hex.slice(1),16);
+  return { r:(bigint>>16)&255, g:(bigint>>8)&255, b:bigint&255 };
 }
+function setColor() { sendCommand('color', hexToRgb(document.getElementById('colorPicker').value)); }
+function setBrightness() { sendCommand('brightness', parseInt(brightnessSlider.value)); }
 
-function setColor() {
-  const hex = document.getElementById('colorPicker').value;
-  const rgb = hexToRgb(hex);
-  sendCommand('color', rgb);
+// PRESETS
+async function bedtime() { 
+  stopDisco();
+  await sendCommand('colorTem', 2700); 
+  await sendCommand('brightness', 4); 
+  brightnessSlider.value = 4; brightnessValue.textContent=4; 
+  statusEl.textContent='🌙 Bedtime mode';
 }
+async function movieMode() { stopDisco(); await sendCommand('color', {r:0,g:0,b:100}); await sendCommand('brightness',20); statusEl.textContent='🎬 Movie mode'; }
+async function readingMode() { stopDisco(); await sendCommand('colorTem',4000); await sendCommand('brightness',90); statusEl.textContent='📖 Reading mode'; }
+async function relaxMode() { stopDisco(); await sendCommand('colorTem',3000); await sendCommand('brightness',40); statusEl.textContent='🛀 Relax mode'; }
+async function sunriseMode() { stopDisco(); await sendCommand('colorTem',2700); await sendCommand('brightness',70); statusEl.textContent='🌅 Sunrise mode'; }
+async function sunsetMode() { stopDisco(); await sendCommand('colorTem',2700); await sendCommand('brightness',30); statusEl.textContent='🌇 Sunset mode'; }
+async function focusMode() { stopDisco(); await sendCommand('colorTem',5000); await sendCommand('brightness',100); statusEl.textContent='⚡ Focus mode'; }
+async function romanticMode() { stopDisco(); await sendCommand('color',{r:255,g:100,b:150}); await sendCommand('brightness',40); statusEl.textContent='❤️ Romantic mode'; }
+async function energyBoostMode() { stopDisco(); await sendCommand('colorTem',6500); await sendCommand('brightness',100); statusEl.textContent='☀️ Energy Boost mode'; }
 
-function setBrightness() {
-  const val = parseInt(brightnessSlider.value);
-  sendCommand('brightness', val);
+// DISCO / PARTY MODE
+function partyMode(){
+  stopDisco();
+  let colors = [ {r:255,g:0,b:0}, {r:0,g:255,b:0}, {r:0,g:0,b:255}, {r:255,g:255,b:0}, {r:255,g:0,b:255}, {r:0,g:255,b:255} ];
+  let i=0;
+  discoInterval = setInterval(()=> {
+    sendCommand('color', colors[i]);
+    sendCommand('brightness',100);
+    i=(i+1)%colors.length;
+  },500);
+  statusEl.textContent='🎉 Disco Party Mode';
 }
+function stopDisco(){ if(discoInterval){ clearInterval(discoInterval); discoInterval=null; } }
 
-// Bedtime Preset
-function bedtimePreset() {
-  brightnessSlider.value = 4;
-  brightnessValue.textContent = 4;
-  sendCommand('brightness', 4);
-  sendCommand('color', { r: 255, g: 147, b: 41 });
-}
-
-// Initial fetch
+// INITIAL FETCH
 fetchDevices();
 </script>
 </body>
 </html>
+
 
 
