@@ -3,25 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Govee Light Dashboard</title>
+<title>Govee Light Dashboard - Dark Mode</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
   body {
     font-family: 'Inter', sans-serif;
     margin: 0;
-    background: #f5f7fa;
-    color: #333;
+    background: #121212;
+    color: #e0e0e0;
   }
 
   header {
-    background: #4a90e2;
-    color: white;
+    background: #1f1f1f;
+    color: #4a90e2;
     padding: 30px 20px;
     text-align: center;
     font-size: 2em;
     font-weight: 600;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
   }
 
   main {
@@ -32,16 +32,16 @@
   }
 
   .card {
-    background: white;
+    background: #1e1e1e;
     border-radius: 20px;
     padding: 25px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.6);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.8);
   }
 
   h2 {
@@ -56,9 +56,11 @@
     margin-bottom: 15px;
     padding: 10px;
     border-radius: 12px;
-    border: 1px solid #ddd;
+    border: none;
     box-sizing: border-box;
     font-size: 1em;
+    background: #2c2c2c;
+    color: #e0e0e0;
   }
 
   input[type=range] {
@@ -67,19 +69,21 @@
   }
 
   button {
-    border: none;
     cursor: pointer;
     font-weight: 600;
     transition: background 0.2s ease;
   }
 
   button:hover {
-    opacity: 0.9;
+    opacity: 0.85;
   }
 
   .on { background: #4CAF50; color: white; }
   .off { background: #E53935; color: white; }
   .blue { background: #4a90e2; color: white; }
+  .preset-btn { background: #f39c12; color: white; font-weight: 600; }
+
+  .preset-btn:hover { background: #e67e22; }
 
   #status {
     font-weight: 600;
@@ -94,24 +98,13 @@
   .control-group button {
     flex: 1;
   }
-
-  .preset-btn {
-    background: #f39c12;
-    color: white;
-    font-weight: 600;
-  }
-
-  .preset-btn:hover {
-    background: #e67e22;
-  }
 </style>
 </head>
 <body>
 
-<header>💡 Govee Light Dashboard</header>
+<header>💡 Govee Light Dashboard - Dark Mode</header>
 
 <main>
-  <!-- Devices Panel -->
   <div class="card">
     <h2>Devices</h2>
     <button id="refresh" class="blue">🔄 Refresh Devices</button>
@@ -119,14 +112,12 @@
     <p id="status">Status: Waiting...</p>
   </div>
 
-  <!-- Color Panel -->
   <div class="card">
     <h2>🎨 Color Control</h2>
     <input type="color" id="colorPicker" value="#ffffff">
     <button id="setColor" class="blue">Set Color</button>
   </div>
 
-  <!-- Brightness Panel -->
   <div class="card">
     <h2>💡 Brightness Control</h2>
     <label>Brightness: <span id="brightnessValue">100</span>%</label>
@@ -134,7 +125,6 @@
     <button id="setBrightness" class="blue">Set Brightness</button>
   </div>
 
-  <!-- Power Panel -->
   <div class="card">
     <h2>Power Control</h2>
     <div class="control-group">
@@ -143,7 +133,6 @@
     </div>
   </div>
 
-  <!-- Presets Panel -->
   <div class="card">
     <h2>Presets</h2>
     <button id="bedtime" class="preset-btn">🌙 Bedtime</button>
@@ -196,7 +185,7 @@ async function fetchDevices() {
     statusEl.textContent = `Found ${devices.length} device(s).`;
   } catch (err) {
     console.error(err);
-    statusEl.textContent = 'Error fetching devices.';
+    statusEl.textContent = 'Error fetching devices. (Check API & CORS)';
   }
 }
 
@@ -251,7 +240,7 @@ function setBrightness() {
   sendCommand('brightness', val);
 }
 
-// Bedtime Preset: 4% brightness, warm white (approx RGB 255, 147, 41)
+// Bedtime Preset
 function bedtimePreset() {
   brightnessSlider.value = 4;
   brightnessValue.textContent = 4;
@@ -264,4 +253,5 @@ fetchDevices();
 </script>
 </body>
 </html>
+
 
