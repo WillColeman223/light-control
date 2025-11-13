@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>💡 Govee Dashboard Pro</title>
+<title>💡 Govee Smart Dashboard</title>
 <style>
 body{margin:0;font-family:Inter,sans-serif;background:#121212;color:#e0e0e0;}
 header{background:#1f1f1f;color:#4a90e2;padding:30px;text-align:center;font-size:2em;box-shadow:0 4px 12px rgba(0,0,0,0.5);}
@@ -27,7 +27,7 @@ button:hover{opacity:0.85;}
 </style>
 </head>
 <body>
-<header>💡 Govee Dashboard Pro</header>
+<header>💡 Govee Smart Dashboard</header>
 <main>
 
 <div class="card">
@@ -126,6 +126,7 @@ const applyAll=document.getElementById('applyAll');
 function hexToRgb(hex){ const bigint=parseInt(hex.slice(1),16); return { r:(bigint>>16)&255, g:(bigint>>8)&255, b:bigint&255 }; }
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 
+// ---------------- QUEUED COMMAND ----------------
 async function sendCommandQueued(name,value){
   let devices=[deviceSelect.value?JSON.parse(deviceSelect.value):null];
   if(applyAll.checked){
@@ -142,7 +143,7 @@ async function sendCommandQueued(name,value){
         headers:{ 'Content-Type':'application/json','Govee-API-Key':API_KEY },
         body: JSON.stringify({ device:deviceId, model:model, cmd:{name,value} })
       });
-      await sleep(200); // small delay to prevent rate limit
+      await sleep(200); // prevent rate limit
     }catch(err){ console.error(err); }
   }
 }
@@ -197,15 +198,30 @@ function stopDisco(){ if(discoInterval){ clearInterval(discoInterval); discoInte
 
 async function applyPreset(colorTemp,brightness,color){
   stopDisco();
-  if(colorTemp) await sendCommandQueued('colorTem',colorTemp);
-  if(color) await sendCommandQueued('color',color);
-  if(brightness!==undefined) await sendCommandQueued('brightness',brightness);
+  await sendCommandQueued('turn','on');
+  if(colorTemp){
+    await sendCommandQueued('colorTem', colorTemp);
+  }
+  if(color){
+    await sendCommandQueued('color', color);
+  }
+  if(brightness!==undefined){
+    // Smooth fade for brightness
+    const steps = 10;
+    const current = parseInt(brightnessSlider.value)||100;
+    for(let i=1;i<=steps;i++){
+      const val = Math.round(current + (i*(brightness-current)/steps));
+      await sendCommandQueued('brightness',val);
+      await sleep(150);
+    }
+  }
 }
 
-document.getElementById('preset1').addEventListener('click',()=>applyPreset(2700,4));       // Bedtime
-document.getElementById('preset2').addEventListener('click',()=>applyPreset(null,20,{r:0,g:0,b:100})); // Movie
-document.getElementById('preset3').addEventListener('click',()=>applyPreset(4000,90));   // Reading
-document.getElementById('preset4').addEventListener('click',()=>applyPreset(3000,40));   // Relax
+// BEDTIME (4% brightness, warm white)
+document.getElementById('preset1').addEventListener('click',()=>applyPreset(2700,4));
+document.getElementById('preset2').addEventListener('click',()=>applyPreset(null,20,{r:0,g:0,b:100}));
+document.getElementById('preset3').addEventListener('click',()=>applyPreset(4000,90));
+document.getElementById('preset4').addEventListener('click',()=>applyPreset(3000,40));
 document.getElementById('preset5').addEventListener('click',()=>{
   stopDisco();
   let colors=[{r:255,g:0,b:0},{r:0,g:255,b:0},{r:0,g:0,b:255},{r:255,g:255,b:0}];
