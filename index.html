@@ -5,65 +5,104 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Govee Light Dashboard</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
   body {
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Inter', sans-serif;
     margin: 0;
-    background: #f0f2f5;
+    background: #f5f7fa;
+    color: #333;
   }
+
   header {
-    background: #2196F3;
+    background: #4a90e2;
     color: white;
-    padding: 20px;
+    padding: 30px 20px;
     text-align: center;
-    font-size: 1.8em;
+    font-size: 2em;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   }
+
   main {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
+    padding: 30px;
   }
-  .panel {
+
+  .card {
     background: white;
-    border-radius: 12px;
-    padding: 20px;
-    min-width: 280px;
-    max-width: 350px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
-  .panel h2 {
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+  }
+
+  h2 {
     margin-top: 0;
-    font-size: 1.2em;
+    font-size: 1.3em;
     margin-bottom: 15px;
+    color: #4a90e2;
   }
+
   select, input[type=color], input[type=range], button {
     width: 100%;
-    margin-top: 5px;
     margin-bottom: 15px;
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
     box-sizing: border-box;
+    font-size: 1em;
   }
+
+  input[type=range] {
+    padding: 0;
+    height: 8px;
+  }
+
   button {
     border: none;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
+    transition: background 0.2s ease;
   }
+
+  button:hover {
+    opacity: 0.9;
+  }
+
   .on { background: #4CAF50; color: white; }
   .off { background: #E53935; color: white; }
-  .blue { background: #2196F3; color: white; }
+  .blue { background: #4a90e2; color: white; }
+
   #status {
-    font-weight: bold;
+    font-weight: 600;
     margin-top: 10px;
   }
+
   .control-group {
     display: flex;
     gap: 10px;
   }
+
   .control-group button {
     flex: 1;
+  }
+
+  .preset-btn {
+    background: #f39c12;
+    color: white;
+    font-weight: 600;
+  }
+
+  .preset-btn:hover {
+    background: #e67e22;
   }
 </style>
 </head>
@@ -72,8 +111,8 @@
 <header>💡 Govee Light Dashboard</header>
 
 <main>
-  <!-- Device Panel -->
-  <div class="panel">
+  <!-- Devices Panel -->
+  <div class="card">
     <h2>Devices</h2>
     <button id="refresh" class="blue">🔄 Refresh Devices</button>
     <select id="deviceSelect"></select>
@@ -81,27 +120,34 @@
   </div>
 
   <!-- Color Panel -->
-  <div class="panel">
+  <div class="card">
     <h2>🎨 Color Control</h2>
     <input type="color" id="colorPicker" value="#ffffff">
     <button id="setColor" class="blue">Set Color</button>
   </div>
 
   <!-- Brightness Panel -->
-  <div class="panel">
+  <div class="card">
     <h2>💡 Brightness Control</h2>
     <label>Brightness: <span id="brightnessValue">100</span>%</label>
     <input type="range" id="brightness" min="0" max="100" value="100">
     <button id="setBrightness" class="blue">Set Brightness</button>
   </div>
 
-  <!-- Power Control Panel -->
-  <div class="panel">
+  <!-- Power Panel -->
+  <div class="card">
     <h2>Power Control</h2>
     <div class="control-group">
       <button id="turnOn" class="on">Turn ON</button>
       <button id="turnOff" class="off">Turn OFF</button>
     </div>
+  </div>
+
+  <!-- Presets Panel -->
+  <div class="card">
+    <h2>Presets</h2>
+    <button id="bedtime" class="preset-btn">🌙 Bedtime</button>
+    <small>Sets brightness to 4% and warm white</small>
   </div>
 </main>
 
@@ -119,6 +165,8 @@ document.getElementById('setColor').addEventListener('click', setColor);
 document.getElementById('setBrightness').addEventListener('click', setBrightness);
 document.getElementById('turnOn').addEventListener('click', () => sendCommand('turn', 'on'));
 document.getElementById('turnOff').addEventListener('click', () => sendCommand('turn', 'off'));
+document.getElementById('bedtime').addEventListener('click', bedtimePreset);
+
 brightnessSlider.addEventListener('input', () => {
   brightnessValue.textContent = brightnessSlider.value;
 });
@@ -203,10 +251,17 @@ function setBrightness() {
   sendCommand('brightness', val);
 }
 
+// Bedtime Preset: 4% brightness, warm white (approx RGB 255, 147, 41)
+function bedtimePreset() {
+  brightnessSlider.value = 4;
+  brightnessValue.textContent = 4;
+  sendCommand('brightness', 4);
+  sendCommand('color', { r: 255, g: 147, b: 41 });
+}
+
 // Initial fetch
 fetchDevices();
 </script>
 </body>
 </html>
 
-</html>
